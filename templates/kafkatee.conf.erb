@@ -48,7 +48,7 @@
 
 # Initial list of kafka brokers
 # Default: none
-kafka.metadata.broker.list = <%= Array(@brokers).sort.join(',') %>
+kafka.metadata.broker.list = <%= Array(@kafka_brokers).sort.join(',') %>
 
 # Offset file directory.
 # Each topic + partition combination has its own offset file.

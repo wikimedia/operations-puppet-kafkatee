@@ -57,8 +57,9 @@ class kafkatee(
     }
 
     service { 'kafkatee':
-        ensure    => running,
-        provider  => 'upstart',
-        subscribe => File['/etc/kafkatee.conf'],
+        ensure     => 'running',
+        provider   => 'upstart',
+        hasrestart => 'true',
+        subscribe  => File['/etc/kafkatee.conf'],
     }
 }

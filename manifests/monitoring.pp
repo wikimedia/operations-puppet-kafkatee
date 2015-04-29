@@ -31,6 +31,6 @@ class kafkatee::monitoring(
         unless  => 'diff -q kafkatee.pyconf.new kafkatee.pyconf && rm kafkatee.pyconf.new',
         command => 'mv kafkatee.pyconf.new kafkatee.pyconf',
         require => Exec['generate-kafkatee.pyconf'],
-        notify  => Service['gmond'],
+        notify  => Service['ganglia-monitor'],
     }
 }

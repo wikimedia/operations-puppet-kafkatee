@@ -12,7 +12,7 @@ class kafkatee::monitoring(
     file { '/usr/lib/ganglia/python_modules/kafkatee.py':
         source  => 'puppet:///modules/kafkatee/kafkatee_ganglia.py',
         require => Package['ganglia-monitor'],
-        notify  => Service['gmond'],
+        notify  => Service['ganglia-monitor'],
     }
 
     # Metrics reported by kafkatee_ganglia.py are

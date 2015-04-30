@@ -190,8 +190,7 @@ output.encoding = <%= @output_encoding %>
 
 # Output format for JSON -> string transformation.
 # Default: none
-output.format = <%= @output_format %>
-
+<%= @output_format ? "output.format = #{@output_format}" : "#output.format =" %>
 
 # Output delimiter
 # The output message ends with this delimiter.

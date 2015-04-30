@@ -25,7 +25,7 @@
 #                              Default: string
 # $output_format             - Format string with which to transform JSON data into
 #                              string output.  See kafkatee.conf documentation
-#                              for more info.
+#                              for more info.  Default: undef.
 #                              Default: SEE PARAMETER
 # $output_queue_size         - Maximum queue size for each output, in number of messages.
 #                              Default: undef, (1000000)
@@ -43,7 +43,7 @@ class kafkatee(
     $log_statistics_file     = '/var/cache/kafkatee/kafkatee.stats.json',
     $log_statistics_interval = 60,
     $output_encoding         = 'string',
-    $output_format           = '%{hostname}	%{sequence}	%{dt}	%{time_firstbyte}	%{ip}	%{cache_status}/%{http_status}	%{response_size}	%{http_method}	http://%{uri_host}%{uri_path}%{uri_query}	-	%{content_type}	%{referer}	%{x_forwarded_for}	%{user_agent}	%{accept_language}	%{x_analytics}',
+    $output_format           = undef,
     $output_queue_size       = undef,
 )
 {

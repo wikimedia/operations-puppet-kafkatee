@@ -53,12 +53,14 @@ class kafkatee(
 
     file { '/etc/kafkatee.conf':
         content => template('kafkatee/kafkatee.conf.erb'),
-        require  => Package['kafkatee'],
+        require => Package['kafkatee'],
     }
 
     service { 'kafkatee':
         ensure     => 'running',
+        # lint:ignore:quoted_booleans
         hasrestart => 'true',
+        # lint:endignore
         subscribe  => File['/etc/kafkatee.conf'],
     }
 }

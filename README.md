@@ -28,3 +28,7 @@
         type        => 'pipe',
     }
 ```
+
+## Testing
+
+Run `tox` which setup appropriate virtualenvs and run commands for you.

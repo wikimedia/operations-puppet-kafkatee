@@ -153,15 +153,15 @@ class KafkateeStats(object):
     per_second_key_suffix = 'per_second'
 
     def __init__(self, stats_file='/var/cache/kafkatee/kafkatee.stats.json', key_separator='.'):
-        self.stats_file               = stats_file
-        self.key_separator            = key_separator
+        self.stats_file = stats_file
+        self.key_separator = key_separator
 
         # NOTE:  It might be more elegant to
         # store the JSON object as it comes back from stats_file,
         # rather than keeping the state in the flattened hash.
 
         # latest flattnened stats as read from stats_file
-        self.flattened_stats          = {}
+        self.flattened_stats = {}
         # previous flattened stats as read from stats_file
         self.flattened_stats_previous = {}
 
@@ -260,14 +260,16 @@ class KafkateeStats(object):
         JSON stats, not the time since update_stats() was last called.
         '''
         # The timestamp will be keyed as 'kafka.rdkafka.time'
-        timestamp_key = self.key_separator.join(key.split(self.key_separator)[0:2]  + ['time'])
+        timestamp_key = self.key_separator.join(key.split(self.key_separator)[0:2] + ['time'])
 
         # if we don't yet have a previous value from which to calculate a
         # rate, just return 0 for now
-        if not self.flattened_stats or not self.flattened_stats_previous or timestamp_key not in self.flattened_stats_previous:
+        if (not self.flattened_stats or not self.flattened_stats_previous or
+                timestamp_key not in self.flattened_stats_previous):
             return 0.0
 
-        interval = self.flattened_stats[timestamp_key] - self.flattened_stats_previous[timestamp_key]
+        interval = self.flattened_stats[timestamp_key] - \
+            self.flattened_stats_previous[timestamp_key]
         # if the timestamps are the same, then just return 0.
         if interval == 0:
             return 0.0
@@ -319,11 +321,14 @@ def metric_handler(name):
 
     seconds_since_last_run = time.time() - last_run_timestamp
     if (seconds_since_last_run >= time_max):
-        logger.debug('Updating kafkatee_stats since it has been {0} seconds, which is more than tmax of {1}'.format(seconds_since_last_run, time_max))
+        logger.debug(
+            ('Updating kafkatee_stats since it has been {0} seconds, '
+             'which is more than tmax of {1}').format(seconds_since_last_run, time_max))
         kafkatee_stats.update_stats()
         last_run_timestamp = time.time()
 
-    logger.debug('metric_handler called for {0}, value: {1}'.format(name, kafkatee_stats.flattened_stats[name]))
+    logger.debug('metric_handler called for {0}, value: {1}'.format(
+        name, kafkatee_stats.flattened_stats[name]))
     return kafkatee_stats.flattened_stats[name]
 
 
@@ -333,10 +338,10 @@ def metric_init(params):
     global time_max
     global last_run_timestamp
 
-    stats_file     = params.get('stats_file', '/var/cache/kafkatee/kafkatee.stats.json')
-    key_separator  = params.get('key_separator', '.')
+    stats_file = params.get('stats_file', '/var/cache/kafkatee/kafkatee.stats.json')
+    key_separator = params.get('key_separator', '.')
     ganglia_groups = params.get('groups', 'kafka')
-    time_max       = int(params.get('tmax', time_max))
+    time_max = int(params.get('tmax', time_max))
 
     kafkatee_stats = KafkateeStats(stats_file, key_separator)
     # Run update_stats() so that we'll have a list of stats keys that will
@@ -412,6 +417,7 @@ import unittest  # noqa
 
 
 class TestKafkateeGanglia(unittest.TestCase):
+
     def setUp(self):
         self.key_separator = '&'
         self.kafkatee_stats = KafkateeStats('/tmp/test-kafkatee.stats.json', self.key_separator)
@@ -464,39 +470,52 @@ class TestKafkateeGanglia(unittest.TestCase):
 
     def test_is_counter_stat(self):
         self.assertTrue(self.kafkatee_stats.is_counter_stat(self.kafkatee_stats.counter_stats[0]))
-        self.assertTrue(self.kafkatee_stats.is_counter_stat('whatever&it&no&matter&' + self.kafkatee_stats.counter_stats[0]))
+        self.assertTrue(self.kafkatee_stats.is_counter_stat(
+            'whatever&it&no&matter&' + self.kafkatee_stats.counter_stats[0]))
         self.assertFalse(self.kafkatee_stats.is_counter_stat('notone'))
 
     def test_update_stats(self):
         self.kafkatee_stats.update_stats(self.flattened_should_be)
-        self.assertEquals(self.kafkatee_stats.flattened_stats['1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
+        self.assertEquals(self.kafkatee_stats.flattened_stats[
+                          '1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
 
         previous_value = self.kafkatee_stats.flattened_stats['1.1&valuetwo']
         self.flattened_should_be['1.1&valuetwo'] = 1
         self.kafkatee_stats.update_stats(self.flattened_should_be)
-        self.assertEquals(self.kafkatee_stats.flattened_stats['1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
-        self.assertEquals(self.kafkatee_stats.flattened_stats_previous['1.1&valuetwo'], previous_value)
+        self.assertEquals(self.kafkatee_stats.flattened_stats[
+                          '1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
+        self.assertEquals(self.kafkatee_stats.flattened_stats_previous[
+                          '1.1&valuetwo'], previous_value)
 
     def test_rate_of_change_update_stats(self):
-        counter_key = 'kafka{0}rdkafka{0}counter{0}{1}'.format(self.key_separator, self.kafkatee_stats.counter_stats[0])
+        counter_key = 'kafka{0}rdkafka{0}counter{0}{1}'.format(
+            self.key_separator, self.kafkatee_stats.counter_stats[0])
         self.kafkatee_stats.update_stats(self.flattened_should_be)
         previous_value = self.flattened_should_be[counter_key]
 
-        # increment the counter and the timestamp to make KafkateeStats calculate a new per_second rate
+        # increment the counter and the timestamp to make KafkateeStats calculate
+        # a new per_second rate
         self.flattened_should_be[counter_key] += 101
         self.flattened_should_be['kafka&rdkafka&time'] += 100.0
         self.kafkatee_stats.update_stats(self.flattened_should_be)
 
-        self.assertEquals(self.kafkatee_stats.flattened_stats_previous[counter_key], previous_value)
-        self.assertEquals(self.kafkatee_stats.flattened_stats[counter_key], self.flattened_should_be[counter_key])
-        self.assertEquals(self.kafkatee_stats.flattened_stats['kafka&rdkafka&time'], self.flattened_should_be['kafka&rdkafka&time'])
-        per_second_key = self.key_separator.join([counter_key, self.kafkatee_stats.per_second_key_suffix])
+        self.assertEquals(
+            self.kafkatee_stats.flattened_stats_previous[counter_key], previous_value)
+        self.assertEquals(self.kafkatee_stats.flattened_stats[
+                          counter_key], self.flattened_should_be[counter_key])
+        self.assertEquals(self.kafkatee_stats.flattened_stats[
+                          'kafka&rdkafka&time'], self.flattened_should_be['kafka&rdkafka&time'])
+        per_second_key = self.key_separator.join(
+            [counter_key, self.kafkatee_stats.per_second_key_suffix])
 
-        rate_should_be = (self.flattened_should_be[counter_key] - self.kafkatee_stats.flattened_stats_previous[counter_key]) / 100.0
+        rate_should_be = (
+            self.flattened_should_be[counter_key] -
+            self.kafkatee_stats.flattened_stats_previous[counter_key]) / 100.0
         self.assertEquals(self.kafkatee_stats.flattened_stats[per_second_key], rate_should_be)
 
 
-def generate_pyconf(module_name, metric_descriptions, params={}, collect_every=15, time_threshold=15):
+def generate_pyconf(
+        module_name, metric_descriptions, params={}, collect_every=15, time_threshold=15):
     '''
     Generates a pyconf file including all of the metrics in metric_descriptions.
     '''
@@ -555,7 +574,9 @@ if __name__ == '__main__':
         help='time_max for ganglia python module metrics.')
     cmdline.add_option(
         '--key-separator', '-k', dest='key_separator', default='.',
-        help='Key separator for flattened json object key name. Default: \'.\'  \'/\' is not allowed.')
+        help=(
+            'Key separator for flattened json object key name. '
+            "Default: '.'  '/' is not allowed."))
     cmdline.add_option('--debug', '-D', action='store_true', default=False,
                        help='Provide more verbose logging for debugging.')
 
@@ -565,7 +586,7 @@ if __name__ == '__main__':
         cmdline.print_help()
         cmdline.error("Must supply statsfile argument.")
 
-    cli_options.stats_file  = arguments[0]
+    cli_options.stats_file = arguments[0]
 
     # Turn the optparse.Value object into a regular dict
     # so we can pass it to metric_init

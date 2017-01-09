@@ -431,8 +431,8 @@ class TestKafkateeGanglia(unittest.TestCase):
                     'value4': False,
                 }
             },
-            '2.1': ['a', 'b'],
-            '2.1': ['a', 'b'],
+            '2.1': ['a', 'b'],  # noqa
+            '2.1': ['a', 'b'],  # noqa
             # '/' should be replaced with key_separator
             '3/1': 'nonya',
             'notme': 'nope',

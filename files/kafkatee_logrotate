@@ -20,6 +20,6 @@
   compress
   delaycompress
   postrotate
-    invoke-rc.d kafkatee reload >/dev/null
+    service kafkatee reload
   endscript
 }

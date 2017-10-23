@@ -14,6 +14,8 @@
 #                              One of: smallest, largest, error.
 #                              Default: largest
 # $kafka_message_max_bytes   - Maximum message size.  Default: undef (4000000).
+# $kafka_group_id            - Consumer group.id for this Kafka Consumer instance.
+#                              Default: $fqdn
 # $pidfile                   - Location of kafkatee pidfile.
 #                              Default: /var/run/kafkatee/kafkatee.pid
 # $log_statistics_file       - Path in which to store kafkatee .json statistics.
@@ -50,6 +52,7 @@ class kafkatee (
     $kafka_offset_store_path = '/var/cache/kafkatee/offsets',
     $kafka_offset_reset      = 'largest',
     $kafka_message_max_bytes = undef,
+    $kafka_group_id          = $::fqdn,
     $pidfile                 = '/var/run/kafkatee/kafkatee.pid',
     $log_statistics_file     = '/var/cache/kafkatee/kafkatee.stats.json',
     $log_statistics_interval = 60,

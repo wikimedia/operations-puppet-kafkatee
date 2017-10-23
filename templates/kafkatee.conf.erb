@@ -67,6 +67,9 @@ kafka.topic.auto.offset.reset = <%= @kafka_offset_reset %>
 # Default: 4000000
 <%= @kafka_message_max_bytes ? "kafka.message.max.bytes = #{@kafka_messages_max_bytes}" : '#kafka.message.max.bytes = 10000000' %>
 
+# Kafka Consumer group.id
+kafka.group.id=<%= @kafka_group_id %>
+
 # Kafka debugging
 # Default: none
 #kafka.debug = msg,topic,broker

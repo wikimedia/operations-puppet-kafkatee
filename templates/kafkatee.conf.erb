@@ -50,6 +50,11 @@
 # Default: none
 kafka.metadata.broker.list = <%= Array(@kafka_brokers).sort.join(',') %>
 
+
+# Offset commit store method: 'file' - local file store (offset.store.path, et.al),
+# 'broker' - broker commit store (requires Apache Kafka 0.8.2 or later on the broker).
+kafka.offset.store.method=<%= @kafka_offset_store_method %>
+
 # Offset file directory.
 # Each topic + partition combination has its own offset file.
 # Default: current directory

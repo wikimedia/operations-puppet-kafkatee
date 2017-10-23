@@ -6,6 +6,7 @@
 #
 # == Parameters:
 # $kafka_brokers             - Array of Kafka broker addresses.
+# $kafka_offset_store_method - Ether 'none', 'file', or 'broker'.  Default: file
 # $kafka_offset_store_path   - Path in which to store consumed Kafka offsets.
 #                              Default: /var/cache/kafkatee/offsets
 # $kafka_offset_reset        - Where to consume from if the offset from which to
@@ -49,17 +50,18 @@
 
 class kafkatee (
     $kafka_brokers,
-    $kafka_offset_store_path = '/var/cache/kafkatee/offsets',
-    $kafka_offset_reset      = 'largest',
-    $kafka_message_max_bytes = undef,
-    $kafka_group_id          = $::fqdn,
-    $pidfile                 = '/var/run/kafkatee/kafkatee.pid',
-    $log_statistics_file     = '/var/cache/kafkatee/kafkatee.stats.json',
-    $log_statistics_interval = 60,
-    $output_encoding         = 'string',
-    $output_format           = undef,
-    $output_queue_size       = undef,
-    $configure_rsyslog       = true,
+    $kafka_offset_store_method = 'file',
+    $kafka_offset_store_path   = '/var/cache/kafkatee/offsets',
+    $kafka_offset_reset        = 'largest',
+    $kafka_message_max_bytes   = undef,
+    $kafka_group_id            = $::fqdn,
+    $pidfile                   = '/var/run/kafkatee/kafkatee.pid',
+    $log_statistics_file       = '/var/cache/kafkatee/kafkatee.stats.json',
+    $log_statistics_interval   = 60,
+    $output_encoding           = 'string',
+    $output_format             = undef,
+    $output_queue_size         = undef,
+    $configure_rsyslog         = true,
 )
 {
     package { 'kafkatee':

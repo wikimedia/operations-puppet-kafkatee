@@ -70,11 +70,16 @@ define kafkatee::instance (
         require => Package['kafkatee'],
     }
 
-    file { "/var/cache/kafkatee/${name}":
+    file { "/var/cache/kafkatee/${title}":
         ensure  => 'directory',
         owner   => 'kafkatee',
         group   => 'kafkatee',
         require => Package['kafkatee'],
+    }
+
+    # Basic logrotate.d configuration to rotate statisitcs files for this instance.
+    logrotate::conf { "kafkatee-${title}":
+        content => template('kafkatee/kafkatee_instance_logrotate.erb'),
     }
 
     file { "/etc/kafkatee/${title}.conf":

@@ -39,6 +39,9 @@
 #                              Default: /etc/kafkatee.conf
 # $config_directory          - kafkatee config include directory.
 #                              Default: /etc/kafkatee.d
+# $output_config             - Instruct the kafkatee instance to read or not
+#                              the output configuration directory.
+#                              Default: true
 # $configure_rsyslog         - Add necessary configuration files for logrotate
 #                              and rsyslog. The rsyslog/logrotate configuration
 #                              are handled by two separate puppet modules
@@ -61,6 +64,7 @@ define kafkatee::instance (
     $output_encoding           = 'string',
     $output_format             = undef,
     $output_queue_size         = undef,
+    $output_config             = true,
 )
 {
     require ::kafkatee

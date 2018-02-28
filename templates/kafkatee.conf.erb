@@ -218,5 +218,7 @@ output.encoding = <%= @output_encoding %>
 input [<%= input['options'].map { |key,val| "#{key}=#{val}" }.join(',') %>] kafka topic <%= input['topic'] %> partition <%= input['partitions'] %> from <%= input['offset'] %>
 <% end -%>
 
+<% if @output_config -%>
 # Include output config files in /etc/kafkatee/<%= @title %>.outputs/*.conf
 include /etc/kafkatee/<%= @title %>.outputs/*.conf
+<% end -%>
